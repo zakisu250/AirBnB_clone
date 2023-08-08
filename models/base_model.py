@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """ Defines a base class called BaseModel """
-import datetime
+from datetime import datetime
 import uuid
 import models
 
@@ -18,8 +18,8 @@ class BaseModel():
         DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
         if not kwargs:
             self.id = str(uuid.uuid4())
-            self.created_at = datetime.datetime.utcnow()
-            self.updated_at = datetime.datetime.utcnow()
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
             models.storage.new(self)
 
         else:
@@ -41,7 +41,7 @@ class BaseModel():
     def save(self):
         """ Updates the public instance attribute updated_at
         with the current datetime """
-        self.updated_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.now()
         models.storage.save()
 
     def to_dict(self):
@@ -54,5 +54,5 @@ class BaseModel():
                 obj_dict[key] = value
 
         obj_dict['__class__'] = self.__class__.__name__
-        self.updated_at = datetime.datetime.now()
+        self.updated_at = datetime.now()
         return obj_dict
