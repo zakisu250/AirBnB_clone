@@ -54,4 +54,5 @@ class BaseModel():
                 obj_dict[key] = value
 
         obj_dict['__class__'] = self.__class__.__name__
+        self.updated_at = datetime.datetime.now()
         return obj_dict
