@@ -43,7 +43,7 @@ class HBNBCommand(cmd.Cmd):
                "** value is missing **"]
 
         if not line:
-            print(msg[0]) 
+            print(msg[0])
             return 1
         args = line.split()
         if arg_nums >= 1 and args[0] not in cls:
@@ -262,6 +262,7 @@ class HBNBCommand(cmd.Cmd):
                 rest = atts.groups()[1].split(", ")
                 cmds[args[1]](args[0] + " " + atts.groups()[0] + " " +
                               rest[0] + " " + rest[1])
+
 
 if __name__ == "__main__":
     cli = HBNBCommand()
