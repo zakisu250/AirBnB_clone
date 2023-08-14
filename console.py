@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """
-The console v0.0.1:
+The console v0.1:
     Creates, Updates and Deletes instances or objects """
-
 
 import json
 import cmd
@@ -88,11 +87,7 @@ class HBNBCommand(cmd.Cmd):
         return False
 
     def do_quit(self, line):
-        """ Terminates the interpreter with quit command
-
-        Args:
-            line(any): input argument quit for quiting
-        """
+        """ Quit command to exit the program
         return True
 
     def do_EOF(self, line):
@@ -107,8 +102,8 @@ class HBNBCommand(cmd.Cmd):
         """ Creates a new instance class and print the id
 
         Args:
-           line(args): Argument used to create instances
-           Example: 'create <class> <name>'
+            line(args): Argument used to create instances
+            Example: 'create <class> <name>'
         """
         if (self.my_errors(line, 1) == 1):
             return
@@ -122,7 +117,7 @@ class HBNBCommand(cmd.Cmd):
         """ Prints the string representation of the instance
 
         Args:
-            line(args): Reviel the instance using <id>
+            line(args): Reviel the instance using "id"
             Example: 'show <User> <ID>'
         """
         if (self.my_errors(line, 2) == 1):
@@ -139,7 +134,7 @@ class HBNBCommand(cmd.Cmd):
         """ Remove or delete the instance
 
         Args:
-            line(args): Delete the User instance using <id>
+            line(args): Delete the User instance using "id"
             Example: 'destroy <User> <ID>'
         """
         if (self.my_errors(line, 2) == 1):
@@ -221,14 +216,14 @@ class HBNBCommand(cmd.Cmd):
         print(instance_count)
 
     def default(self, line):
-        """ Handle default values of the methods listed below
-        all
-        show
-        destroy
-        count
-        update
+        "" Handle default values of the methods listed below
+        to showall
+        to show
+        to destroy
+        to count
+        to update
 
-        Detail:
+        Args:
             Validate and use user commands
         """
         clss = ["BaseModel", "User", "Place", "State", "City",
