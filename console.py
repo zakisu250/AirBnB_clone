@@ -216,15 +216,15 @@ class HBNBCommand(cmd.Cmd):
         print(instance_count)
 
     def default(self, line):
-        """ Handle default values of the methods listed below
-        to showall
-        to show
-        to destroy
-        to count
-        to update
+        """ Handles default values of the methods listed below
+        all
+        show
+        destroy
+        count
+        update
 
-        Args:
-            Validate and use user commands
+        Description:
+            line: Validate and use user commands
         """
         clss = ["BaseModel", "User", "Place", "State", "City",
                 "Amenity", "Review"]
