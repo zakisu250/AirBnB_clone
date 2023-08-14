@@ -7,11 +7,7 @@ The console v0.0.1:
 import json
 import cmd
 import re
-<<<<<<< HEAD
 import models
-=======
-from models import storage
->>>>>>> 3ba2abf81352df6b6b437d289579a74abd6b676e
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
