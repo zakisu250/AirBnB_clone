@@ -216,7 +216,7 @@ class HBNBCommand(cmd.Cmd):
         print(instance_count)
 
     def default(self, line):
-        "" Handle default values of the methods listed below
+        """ Handle default values of the methods listed below
         to showall
         to show
         to destroy
