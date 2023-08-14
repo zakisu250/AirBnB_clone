@@ -27,7 +27,7 @@ class BaseModel():
                 if key in ("updated_at", "created_at"):
                     self.__dict__[key] = datetime.strptime(
                             value, DATE_FORMAT)
-                elif key[0]  == "id":
+                elif key[0] == "id":
                     self.__dict__[key] = str(value)
                 else:
                     self.__dict__[key] = value
