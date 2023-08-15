@@ -7,6 +7,7 @@ import json
 import cmd
 import re
 import models
+from models import storage
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -19,13 +20,13 @@ from models.review import Review
 class HBNBCommand(cmd.Cmd):
     """ Hbnb Command interpreter """
 
-    prompt = '(hbnb)'
+    prompt = '(hbnb) '
 
-    def do_quit(self):
+    def do_quit(self, line):
         """ quit the command interpreter """
         return True
 
-    def do_EOF(self):
+    def do_EOF(self, line):
         """ Terminate the command interpreter """
         return True
 
@@ -92,7 +93,7 @@ class HBNBCommand(cmd.Cmd):
         Args:
             line(any): no input from the command
         """
-        return False
+        pass
 
     def do_create(self, line):
         """ Creates a new instance class and print the id
@@ -222,38 +223,38 @@ class HBNBCommand(cmd.Cmd):
         Description:
             line: Validate and use user commands
         """
-        clss = ["BaseModel", "User", "Place", "State", "City",
-                "Amenity", "Review"]
-        cmds = {"all": self.do_all,
-                "count": self.my_count,
-                "show": self.do_show,
-                "destroy": self.do_destroy,
-                "update": self.do_update
-                }
+        self._precmd(line)
 
-        args = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
-        if args:
-            args = args.groups()
-        if not args or len(args) < 2 or args[0] not in clss \
-                or args[1] not in cmds.keys():
-            super().default(line)
-        return
-        if args[1] in ["all", "count"]:
-            cmds[args[1]](args[0])
-        elif args[1] in ["show", "destroy"]:
-            cmds[args[1]](args[0] + ' ' + args[2])
-        elif args[1] == "update":
-            atts = re.match(r"\"(.+?)\", (.+)", args[2])
-            if atts.groups()[1][0] == "{":
-                a_dict = eval(atts.groups()[1])
-                for key, val in a_dict.items():
-                    cmds[args[1]](args[0] + " " + atts.groups()[0] +
-                                  " " + key + " " + str(val))
-            else:
-                mor = atts.groups()[1].split(", ")
-                cmds[args[1]](args[0] + " " + atts.groups()[0] + " " +
-                              mor[0] + " " + mor[1])
+    def _precmd(self, line):
+        """ Intercepts commands to test for class """
+        match = re.search(r"^(\w*)\.(\w+)(?:\(([^)]*)\))$", line)
+        if not match:
+            return line
+        clsname = match.group(1)
+        method = match.group(2)
+        args = match.group(3)
+        match_uid_and_args = re.search('^"([^"]*)"(?:, (.*))?$', args)
+        if match_uid_and_args:
+            uid = match_uid_and_args.group(1)
+            attr_or_dict = match_uid_and_args.group(2)
+        else:
+            uid = args
+            attr_or_dict = False
 
+        attr_and_value = ""
+        if method == "update" and attr_or_dict:
+            match_dict = re.search('^({.*})$', attr_or_dict)
+            if match_dict:
+                self.update_dict(clsname, uid, match_dict.group(1))
+                return ""
+            match_attr_and_value = re.search(
+                '^(?:"([^"]*)")?(?:, (.*))?$', attr_or_dict)
+            if match_attr_and_value:
+                attr_and_value = (match_attr_and_value.group(
+                    1) or "") + " " + (match_attr_and_value.group(2) or "")
+        cmnd = method + " " + clsname + " " + uid + " " + attr_and_value
+        self.onecmd(cmnd)
+        return cmnd
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
