@@ -122,7 +122,7 @@ class HBNBCommand(cmd.Cmd):
 
         args = line.split()
         s_d = storage.all()
-        if args[1][0] == '""':
+        if args[1][0] == '"':
             args[1][0] = args[1].replace('"', "")
         key = args[0] + '.' + args[1]
         print(s_d[key])
@@ -199,18 +199,20 @@ class HBNBCommand(cmd.Cmd):
         setattr(s_d[key], a_key, a_val)
         storage.save()
 
-    def my_count(self, class_n):
+    def my_count(self, line):
         """ Count number of instance in a class
 
         Args:
-            class_n(cls): class instances
+            line(cls): class instances
         """
-        instance_count = 0
-        s_d = storage.all.values()
-        for obj in s_d:
-            if obj.__class__.__name__ == class_n:
-                instance_count += 1
-        print(instance_count)
+        if not line:
+            print(self.my_errors.msg[0])
+
+        count = 0
+        for obj in storage.all():
+            if obj.__class__.name__ == line:
+                count += 1
+        print(count)
 
     def default(self, line):
         """ Handles default values of the methods listed below
@@ -255,6 +257,7 @@ class HBNBCommand(cmd.Cmd):
         cmnd = method + " " + clsname + " " + uid + " " + attr_and_value
         self.onecmd(cmnd)
         return cmnd
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
