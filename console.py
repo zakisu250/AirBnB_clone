@@ -24,6 +24,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, arg):
         """ Terminate the command interpreter """
+        print()
         return True
 
     def do_quit(self, arg):
@@ -57,31 +58,25 @@ class HBNBCommand(cmd.Cmd):
         if arg_nums >= 1 and args[0] not in cls:
             print(msg[1])
             return 1
-
         elif arg_nums == 1:
             return 0
-
         if arg_nums >= 2 and len(args) < 2:
             print(msg[2])
             return 1
 
-        s_d = storage.all()
+        sd = storage.all()
         for i in range(len(args)):
-            if args[i][0] == '""':
+            if args[i][0] == '"':
                 args[i] = args[i].replace('"', "")
-
         key = args[0] + '.' + args[1]
-        if arg_nums >= 2 and key not in s_d:
+        if arg_nums >= 2 and key not in sd:
             print(msg[3])
             return 1
-
         elif arg_nums == 2:
             return 0
-
         if arg_nums >= 4 and len(args) < 3:
             print(msg[4])
             return 1
-
         if arg_nums >= 4 and len(args) < 4:
             print(msg[5])
             return 1
@@ -115,22 +110,16 @@ class HBNBCommand(cmd.Cmd):
 
         Args:
             line(args): Reviel the instance using "id"
-            Example: 'show <User> <ID>'
+            Example: 'show User USERID'
         """
         if (self.my_errors(line, 2) == 1):
             return
-        else:
-            args = line.split()
-            if len(args) != 2:
-                print("** instance id missing **")
-            elif args[0] not in clss:
-                print("** class doesn't exist **")
-            else:
-                for key, val in storage.all.items():
-                    if args[1] == val.id:
-                        print(val)
-                        return
-                print("** no instance found **")
+        args = line.split(" ")
+        sd = storage.all()
+        if args[1][0] == '"':
+            args[1] = args[1].replace('"', "")
+        key = args[0] + '.' + args[1]
+        print(sd[key])
 
     def do_destroy(self, line):
         """ Remove or delete the instance
@@ -162,7 +151,7 @@ class HBNBCommand(cmd.Cmd):
             print([str(msg) for msg in s_d.values()])
             return
 
-        args = line.split()
+        args = line.split(" ")
         if (self.my_errors(line, 1) == 1):
             return
         print([str(val) for val in s_d.values()
@@ -210,7 +199,8 @@ class HBNBCommand(cmd.Cmd):
         words = line.split(' ')
         if not words[0]:
             print("** class name missing **")
-        elif words[0] not in storage.classes():
+        elif words[0] not in ["BaseModel", "User", "State", "Place",
+               "Amenity", "City", "Review"]:
             print("** class doesn't exist **")
         else:
             matches = [
@@ -220,47 +210,48 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, line):
         """ Handles default values of the methods listed below
-        all
-        show
-        destroy
-        count
-        update
+        <classname>.all
+        <classname>.show
+        <classname>.destroy
+        <classname>.count
+        <classname>.update
 
         Description:
             line: Validate and use user commands
         """
-        self._precmd(line)
+        clss = ["BaseModel", "User", "State", "City", "Amenity",
+                 "Place", "Review"]
 
-    def _precmd(self, line):
-        """ Intercepts commands to test for class """
-        match = re.search(r"^(\w*)\.(\w+)(?:\(([^)]*)\))$", line)
-        if not match:
-            return line
-        clsname = match.group(1)
-        method = match.group(2)
-        args = match.group(3)
-        match_uid_and_args = re.search('^"([^"]*)"(?:, (.*))?$', args)
-        if match_uid_and_args:
-            uid = match_uid_and_args.group(1)
-            attr_or_dict = match_uid_and_args.group(2)
-        else:
-            uid = args
-            attr_or_dict = False
+        cmds = {"all": self.do_all,
+                "count": self.do_count,
+                "show": self.do_show,
+                "destroy": self.do_destroy,
+                "update": self.do_update
+               }
 
-        attr_and_value = ""
-        if method == "update" and attr_or_dict:
-            match_dict = re.search('^({.*})$', attr_or_dict)
-            if match_dict:
-                self.update_dict(clsname, uid, match_dict.group(1))
-                return ""
-            match_attr_and_value = re.search(
-                '^(?:"([^"]*)")?(?:, (.*))?$', attr_or_dict)
-            if match_attr_and_value:
-                attr_and_value = (match_attr_and_value.group(
-                    1) or "") + " " + (match_attr_and_value.group(2) or "")
-        cmnd = method + " " + clsname + " " + uid + " " + attr_and_value
-        self.onecmd(cmnd)
-        return cmnd
+        args = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
+        if args:
+            args = args.groups()
+        if not args or len(args) < 2 or args[0] not in clss \
+                or args[1] not in cmds.keys():
+            super().default(line)
+        return
+
+        if args[1] in ["all", "count"]:
+            cmds[args[1]](args[0])
+        elif args[1] in ["show", "destroy"]:
+            cmds[args[1]](args[0] + ' ' + args[2])
+        elif args[1] == "update":
+            attrs = re.match(r"\"(.+?)\", (.+)", args[2])
+            if attrs.groups()[1][0] == '{':
+                a_dict = eval(attrs.groups()[1])
+                for key, val in a_dict.items():
+                    cmds[args[1]](args[0] + " " + attrs.groups()[0] +
+                                      " " + key + " " + str(val))
+            else:
+                mor = attrs.groups()[1].split(", ")
+                cmds[args[1]](args[0] + " " + attrs.groups()[0] + " " +
+                                  mor[0] + " " + mor[1])
 
 
 if __name__ == '__main__':
