@@ -19,7 +19,15 @@ from models.review import Review
 class HBNBCommand(cmd.Cmd):
     """ Hbnb Command interpreter """
 
-    prompt = '(hbnb) '
+    prompt = '(hbnb)'
+
+    def do_quit(self):
+        """ quit the command interpreter """
+        return True
+
+    def do_EOF(self):
+        """ Terminate the command interpreter """
+        return True
 
     def my_errors(self, line, arg_nums):
         """ Display Error messages to the user
@@ -85,18 +93,6 @@ class HBNBCommand(cmd.Cmd):
             line(any): no input from the command
         """
         return False
-
-    def do_quit(self, line):
-        """ Quit command to exit the program """
-        return True
-
-    def do_EOF(self, line):
-        """ Handles ctrl+D to terminate the command
-
-        Args:
-            line(args): input argument for quiting
-        """
-        return True
 
     def do_create(self, line):
         """ Creates a new instance class and print the id
@@ -237,8 +233,8 @@ class HBNBCommand(cmd.Cmd):
 
         args = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
         if args:
-            args = args.group()
-        if not args or len(args) < 2 or args[0] not in clss \
+            args = args.groups()
+        if not args or len(args) < 2 or args[0] not in clss
                 or args[1] not in cmds.keys():
             super().default(line)
         return
@@ -254,9 +250,9 @@ class HBNBCommand(cmd.Cmd):
                     cmds[args[1]](args[0] + " " + atts.groups()[0] +
                                   " " + key + " " + str(val))
             else:
-                rest = atts.groups()[1].split(", ")
+                mor = atts.groups()[1].split(", ")
                 cmds[args[1]](args[0] + " " + atts.groups()[0] + " " +
-                              rest[0] + " " + rest[1])
+                              mor[0] + " " + mor[1])
 
 
 if __name__ == '__main__':
