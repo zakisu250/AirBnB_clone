@@ -22,12 +22,12 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = '(hbnb) '
 
-    def do_quit(self, line):
-        """ quit the command interpreter """
+    def do_EOF(self, arg):
+        """ Terminate the command interpreter """
         return True
 
-    def do_EOF(self, line):
-        """ Terminate the command interpreter """
+    def do_quit(self, arg):
+        """ Exit the program"""
         return True
 
     def my_errors(self, line, arg_nums):
@@ -119,13 +119,18 @@ class HBNBCommand(cmd.Cmd):
         """
         if (self.my_errors(line, 2) == 1):
             return
-
-        args = line.split()
-        s_d = storage.all()
-        if args[1][0] == '"':
-            args[1][0] = args[1].replace('"', "")
-        key = args[0] + '.' + args[1]
-        print(s_d[key])
+        else:
+            args = line.split()
+            if len(args) != 2:
+                print("** instance id missing **")
+            elif args[0] not in clss:
+                print("** class doesn't exist **")
+            else:
+                for key, val in storage.all.items():
+                    if args[1] == val.id:
+                        print(val)
+                        return
+                print("** no instance found **")
 
     def do_destroy(self, line):
         """ Remove or delete the instance
@@ -173,10 +178,10 @@ class HBNBCommand(cmd.Cmd):
         if (self.my_errors(line, 4) == 1):
             return
 
-        args = line.split()
+        args = line.split(" ")
         s_d = storage.all()
         for i in range(len(args[1:]) + 1):
-            if args[i][0] == '""':
+            if args[i][0] == '"':
                 args[i] = args[i].replace('"', "")
         key = args[0] + '.' + args[1]
         a_key = args[2]
@@ -205,11 +210,8 @@ class HBNBCommand(cmd.Cmd):
         Args:
             line(cls): class instances
         """
-        if not line:
-            print(self.my_errors.msg[0])
-
         count = 0
-        for obj in storage.all():
+        for obj in storage.all.values():
             if obj.__class__.name__ == line:
                 count += 1
         print(count)
