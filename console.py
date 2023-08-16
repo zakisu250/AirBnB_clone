@@ -20,7 +20,7 @@ from models.review import Review
 class HBNBCommand(cmd.Cmd):
     """ HBNB Command interpreter """
 
-    prompt = '(hbnb) '
+    prompt = '(hbnb)'
 
     def do_EOF(self, arg):
         """ Terminate the command interpreter """
