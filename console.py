@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 """
-The console v0.1:
-    Creates, Updates and Deletes instances or objects """
+The console v: 0.0.1
+Contains the entry point of the command interpreter
+"""
 
-import json
 import cmd
+import json
 import re
 import models
 from models import storage
@@ -18,239 +19,260 @@ from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
-    """ HBNB Command interpreter """
+    """
+    Custom console class
+    """
 
-    prompt = '(hbnb)'
+    prompt = '(hbnb) '
 
-    def do_EOF(self, arg):
-        """ Terminate the command interpreter """
-        print()
-        return True
-
-    def do_quit(self, arg):
-        """ Quit command to exit the program """
-        return True
-
-    def my_errors(self, line, arg_nums):
-        """ Display Error messages to the user
+    def my_errors(self, line, num_of_args):
+        """Displays error messages to user
 
         Args:
-            line(any): reads command with readline
-            arg_nums(int): number of command arguments
+            line(any): gets user input using command line
+            num_of_args(int): number of input arguments
 
-        Detail:
-            Display output to the use based on the input
+        Description:
+            Displays output to the use based on
+            the input commands.
+
         """
+        classes = ["BaseModel", "User", "State", "City",
+                   "Amenity", "Place", "Review"]
 
-        cls = ["BaseModel", "User", "State", "Place",
-               "Amenity", "City", "Review"]
         msg = ["** class name missing **",
                "** class doesn't exist **",
                "** instance id missing **",
                "** no instance found **",
-               "** attribute name is missing **",
-               "** value is missing **"]
-
+               "** attribute name missing **",
+               "** value missing **"]
         if not line:
             print(msg[0])
             return 1
         args = line.split()
-        if arg_nums >= 1 and args[0] not in cls:
+        if num_of_args >= 1 and args[0] not in classes:
             print(msg[1])
             return 1
-        elif arg_nums == 1:
+        elif num_of_args == 1:
             return 0
-        if arg_nums >= 2 and len(args) < 2:
+        if num_of_args >= 2 and len(args) < 2:
             print(msg[2])
             return 1
+        d = storage.all()
 
-        sd = storage.all()
         for i in range(len(args)):
             if args[i][0] == '"':
                 args[i] = args[i].replace('"', "")
         key = args[0] + '.' + args[1]
-        if arg_nums >= 2 and key not in sd:
+        if num_of_args >= 2 and key not in d:
             print(msg[3])
             return 1
-        elif arg_nums == 2:
+        elif num_of_args == 2:
             return 0
-        if arg_nums >= 4 and len(args) < 3:
+        if num_of_args >= 4 and len(args) < 3:
             print(msg[4])
             return 1
-        if arg_nums >= 4 and len(args) < 4:
+        if num_of_args >= 4 and len(args) < 4:
             print(msg[5])
             return 1
         return 0
 
     def handle_empty_line(self, line):
-        """ Removes empty line
+        """
+        Eliminates empty lines
+        """
+        return False
+
+    def do_quit(self, line):
+        """Handles the 'quit' command
 
         Args:
-            line(any): no input from the command
+            line(args): input argument for quiting
+            the terminal
+
         """
-        pass
+        return True
+
+    def do_EOF(self, line):
+        """Quits command interpreter with ctrl+d
+
+         Args:
+            line(args): input argument for quiting
+            the terminal
+
+        """
+        return True
 
     def do_create(self, line):
-        """ Creates a new instance class and print the id
+        """Creates a new instance of @cls_name class,
+        and prints the new instance's ID.
 
         Args:
-            line(args): Argument used to create instances
-            Example: 'create <class> <name>'
+            line(args): Arguments to enter with command: <class name>
+            Example: 'create User'
+
         """
         if (self.my_errors(line, 1) == 1):
             return
-
         args = line.split(" ")
+
+        """
+        args[0] contains class name, create new instance
+        of that class updates 'updated_at' attribute,
+        and saves into JSON file
+        """
         obj = eval(args[0])()
         obj.save()
+
         print(obj.id)
 
     def do_show(self, line):
-        """ Prints the string representation of the instance
+        """Prints a string representation of an instance.
 
         Args:
-            line(args): Reviel the instance using "id"
-            Example: 'show User USERID'
+            line(line): to enter with command <class name> <id>
+            Example: 'show User 1234-1234-1234'
+
         """
         if (self.my_errors(line, 2) == 1):
             return
-        args = line.split(" ")
-        sd = storage.all()
+        args = line.split()
+        d = storage.all()
         if args[1][0] == '"':
             args[1] = args[1].replace('"', "")
         key = args[0] + '.' + args[1]
-        print(sd[key])
+        print(d[key])
 
     def do_destroy(self, line):
-        """ Remove or delete the instance
+        """Deletes an instance of a certain class.
 
         Args:
-            line(args): Delete the User instance using "id"
-            Example: 'destroy <User> <ID>'
+            line(args): to enter with command: <class name> <id>
+            Example: 'destroy User 1234-1234-1234'
+
         """
         if (self.my_errors(line, 2) == 1):
             return
-
         args = line.split()
-        s_d = storage.all()
-        if args[1][0] == '""':
+        d = storage.all()
+        if args[1][0] == '"':
             args[1] = args[1].replace('"', "")
         key = args[0] + '.' + args[1]
-        del s_d[key]
+        del d[key]
         storage.save()
 
     def do_all(self, line):
-        """ Show all instances of particular class
+        """Shows all instances, or instances of a certain class
 
-        Args:
-            line(args): argument use to view user
+        Args: 
+            line(args): enter with command (optional): <class name>
             Example: 'all' OR 'all User'
-        """
-        s_d = storage.all()
-        if not line:
-            print([str(msg) for msg in s_d.values()])
-            return
 
-        args = line.split(" ")
+        """
+        d = storage.all()
+        if not line:
+            print([str(x) for x in d.values()])
+            return
+        args = line.split()
         if (self.my_errors(line, 1) == 1):
             return
-        print([str(val) for val in s_d.values()
-               if val.__class__.__name__ == args[0]])
+        print([str(v) for v in d.values()
+               if v.__class__.__name__ == args[0]])
 
     def do_update(self, line):
-        """ Update the instance with given attribute values
+        """Updates an instance based on the class name
+        and id by adding or updating an attribute
 
         Args:
-            line(args): used with commands to update the instance
-            Example: 'update <User> <ID> new_name "Zaki"'
+            line(args): receives the commands:
+            <class name> <id> <attribute name> "<attribute value>"
+            Example: 'update User 1234-1234-1234 my_name "Bob"'
+
         """
         if (self.my_errors(line, 4) == 1):
             return
-
-        args = line.split(" ")
-        s_d = storage.all()
+        args = line.split()
+        d = storage.all()
         for i in range(len(args[1:]) + 1):
             if args[i][0] == '"':
                 args[i] = args[i].replace('"', "")
         key = args[0] + '.' + args[1]
-        a_key = args[2]
-        a_val = args[3]
+        attr_k = args[2]
+        attr_v = args[3]
         try:
-            if a_val.isdigit():
-                a_val = int(a_val)
-            elif float(a_val):
-                a_val = float(a_val)
+            if attr_v.isdigit():
+                attr_v = int(attr_v)
+            elif float(attr_v):
+                attr_v = float(attr_v)
         except ValueError:
             pass
-
-        class_a = type(s_d[key]).__dict__
-        if a_key in class_a.keys():
+        class_attr = type(d[key]).__dict__
+        if attr_k in class_attr.keys():
             try:
-                a_val = type(class_a[a_key])(a_val)
+                attr_v = type(class_attr[attr_k])(attr_v)
             except Exception:
                 print("Entered wrong value type")
                 return
-        setattr(s_d[key], a_key, a_val)
+        setattr(d[key], attr_k, attr_v)
         storage.save()
 
-    def do_count(self, line):
-        """Counts the instances of a class.
+    def my_count(self, class_n):
         """
-        words = line.split(' ')
-        if not words[0]:
-            print("** class name missing **")
-        elif words[0] not in ["BaseModel", "User", "State", "Place",
-                              "Amenity", "City", "Review"]:
-            print("** class doesn't exist **")
-        else:
-            matches = [
-                k for k in storage.all() if k.startswith(
-                    words[0] + '.')]
-            print(len(matches))
+        Method counts instances of a certain class
+        """
+        count_instance = 0
+        for instance_object in storage.all().values():
+            if instance_object.__class__.__name__ == class_n:
+                count_instance += 1
+        print(count_instance)
 
     def default(self, line):
-        """ Handles default values of the methods listed below
-        <classname>.all
-        <classname>.show
-        <classname>.destroy
-        <classname>.count
-        <classname>.update
+        """Method to take care of following commands:
+        <class name>.all()
+        <class name>.count()
+        <class name>.show(<id>)
+        <class name>.destroy(<id>)
+        <class name>.update(<id>, <attribute name>, <attribute value>)
+        <class name>.update(<id>, <dictionary representation)
 
         Description:
-            line: Validate and use user commands
-        """
-        clss = ["BaseModel", "User", "State", "City", "Amenity",
-                "Place", "Review"]
+            Creates a list representations of functional models
+            Then use the functional methods to implement user
+            commands, by validating all the input commands
 
-        cmds = {"all": self.do_all,
-                "count": self.do_count,
-                "show": self.do_show,
-                "destroy": self.do_destroy,
-                "update": self.do_update}
+        """
+        names = ["BaseModel", "User", "State", "City", "Amenity",
+                 "Place", "Review"]
+
+        commands = {"all": self.do_all,
+                    "count": self.my_count,
+                    "show": self.do_show,
+                    "destroy": self.do_destroy,
+                    "update": self.do_update}
 
         args = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
         if args:
             args = args.groups()
-        if not args or len(args) < 2 or args[0] not in clss \
-                or args[1] not in cmds.keys():
+        if not args or len(args) < 2 or args[0] not in names \
+                or args[1] not in commands.keys():
             super().default(line)
-            return
+        return
 
         if args[1] in ["all", "count"]:
-            cmds[args[1]](args[0])
+            commands[args[1]](args[0])
         elif args[1] in ["show", "destroy"]:
-            cmds[args[1]](args[0] + ' ' + args[2])
+            commands[args[1]](args[0] + ' ' + args[2])
         elif args[1] == "update":
-            attrs = re.match(r"\"(.+?)\", (.+)", args[2])
-            if attrs.groups()[1][0] == '{':
-                a_dict = eval(attrs.groups()[1])
-                for key, val in a_dict.items():
-                    cmds[args[1]](args[0] + " " + attrs.groups()[0] +
-                                  " " + key + " " + str(val))
+            params = re.match(r"\"(.+?)\", (.+)", args[2])
+            if params.groups()[1][0] == '{':
+                dic_p = eval(params.groups()[1])
+                for k, v in dic_p.items():
+                    commands[args[1]](args[0] + " " + params.groups()[0] +
+                                      " " + k + " " + str(v))
             else:
-                mor = attrs.groups()[1].split(", ")
-                cmds[args[1]](args[0] + " " + attrs.groups()[0] + " " +
-                              mor[0] + " " + mor[1])
+                rest = params.groups()[1].split(", ")
+                commands[args[1]](args[0] + " " + params.groups()[0] + " " +
+                                  rest[0] + " " + rest[1])
 
 
 if __name__ == '__main__':
