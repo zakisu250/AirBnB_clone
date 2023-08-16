@@ -24,6 +24,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, arg):
         """ Terminate the command interpreter """
+        print()
         return True
 
     def do_quit(self, arg):
@@ -87,7 +88,7 @@ class HBNBCommand(cmd.Cmd):
         Args:
             line(any): no input from the command
         """
-        return False
+        pass
 
     def do_create(self, line):
         """ Creates a new instance class and print the id
