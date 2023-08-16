@@ -200,7 +200,7 @@ class HBNBCommand(cmd.Cmd):
         if not words[0]:
             print("** class name missing **")
         elif words[0] not in ["BaseModel", "User", "State", "Place",
-               "Amenity", "City", "Review"]:
+                              "Amenity", "City", "Review"]:
             print("** class doesn't exist **")
         else:
             matches = [
@@ -220,14 +220,13 @@ class HBNBCommand(cmd.Cmd):
             line: Validate and use user commands
         """
         clss = ["BaseModel", "User", "State", "City", "Amenity",
-                 "Place", "Review"]
+                "Place", "Review"]
 
         cmds = {"all": self.do_all,
                 "count": self.do_count,
                 "show": self.do_show,
                 "destroy": self.do_destroy,
-                "update": self.do_update
-               }
+                "update": self.do_update}
 
         args = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
         if args:
@@ -247,11 +246,11 @@ class HBNBCommand(cmd.Cmd):
                 a_dict = eval(attrs.groups()[1])
                 for key, val in a_dict.items():
                     cmds[args[1]](args[0] + " " + attrs.groups()[0] +
-                                      " " + key + " " + str(val))
+                                  " " + key + " " + str(val))
             else:
                 mor = attrs.groups()[1].split(", ")
                 cmds[args[1]](args[0] + " " + attrs.groups()[0] + " " +
-                                  mor[0] + " " + mor[1])
+                              mor[0] + " " + mor[1])
 
 
 if __name__ == '__main__':
