@@ -10,7 +10,7 @@ from models.user import User
 class FileStorage:
     """ File storage class """
 
-    __file = "file.json"
+    __file_path = "file.json"
     __objects = {}
 
     def all(self):
@@ -30,7 +30,7 @@ class FileStorage:
     def save(self):
         """ saves or serializes the json string to file """
 
-        with open(self.__file, 'w+') as f:
+        with open(self.__file_path, 'w+') as f:
             json.dump({key: value.to_dict() for key, value in
                        self.__objects.items()}, f)
 
@@ -38,7 +38,7 @@ class FileStorage:
         """ recreates or deserializes json string to __obj """
 
         try:
-            with open(self.__file, 'r') as f:
+            with open(self.__file_path, 'r') as f:
                 dictn = json.loads(f.read())
                 for val in dictn.values():
                     cls = val["__class__"]
