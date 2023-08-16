@@ -18,13 +18,12 @@ from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
-    """ Hbnb Command interpreter """
+    """ HBNB Command interpreter """
 
     prompt = '(hbnb) '
 
     def do_EOF(self, arg):
         """ Terminate the command interpreter """
-        print()
         return True
 
     def do_quit(self, arg):
@@ -88,7 +87,7 @@ class HBNBCommand(cmd.Cmd):
         Args:
             line(any): no input from the command
         """
-        pass
+        return False
 
     def do_create(self, line):
         """ Creates a new instance class and print the id
@@ -234,7 +233,7 @@ class HBNBCommand(cmd.Cmd):
         if not args or len(args) < 2 or args[0] not in clss \
                 or args[1] not in cmds.keys():
             super().default(line)
-        return
+            return
 
         if args[1] in ["all", "count"]:
             cmds[args[1]](args[0])
