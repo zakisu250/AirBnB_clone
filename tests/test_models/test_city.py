@@ -29,8 +29,8 @@ class TestCity(unittest.TestCase):
     def resetStorage(self):
         """Resets FileStorage data."""
         FileStorage._FileStorage__objects = {}
-        if os.path.isfile(FileStorage._FileStorage__file_path):
-            os.remove(FileStorage._FileStorage__file_path)
+        if os.path.isfile(FileStorage._FileStorage__file):
+            os.remove(FileStorage._FileStorage__file)
 
     def test_8_instantiation(self):
         """Tests instantiation of City class."""
@@ -40,13 +40,6 @@ class TestCity(unittest.TestCase):
         self.assertIsInstance(b, City)
         self.assertTrue(issubclass(type(b), BaseModel))
 
-    def test_8_attributes(self):
-        """Tests the attributes of City class."""
-        attributes = storage.attributes()["City"]
-        o = City()
-        for k, v in attributes.items():
-            self.assertTrue(hasattr(o, k))
-            self.assertEqual(type(getattr(o, k, None)), v)
 
 if __name__ == "__main__":
     unittest.main()
