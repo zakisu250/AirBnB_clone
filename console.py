@@ -66,7 +66,7 @@ class HBNBCommand(cmd.Cmd):
     def do_destroy(self, line):
         """ Deletes an instance based on the class name and id """
         args = line.split()
-        if not line:
+        if not args:
             print("** class name missing **")
             return
         elif len(args) < 2:
@@ -77,7 +77,7 @@ class HBNBCommand(cmd.Cmd):
             return
         sd = models.storage.all()
         for key, val in sd.items():
-            if args[0] == val.id:
+            if args[1] == val.id:
                 del sd[key]
                 models.storage.save()
                 return
