@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """Class HBNBComand a program called console.py
 """
 
@@ -22,13 +22,13 @@ class HBNBCommand(cmd.Cmd):
     """ hbnb command interpreter """
     prompt = '(hbnb) '
 
-    def do_EOF(self, arg):
+    def do_EOF(self, line):
         """ End of file"""
         print()
         return True
 
-    def do_quit(self, arg):
-        """ exit the program"""
+    def do_quit(self, line):
+        """ Quit command to exit the program """
         return True
 
     def emptyline(self):
