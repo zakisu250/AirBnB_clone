@@ -105,17 +105,18 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, args):
         """ Updates an instance based on the class name and id """
         args = args.split()
+        sd = models.storage.all()
         if len(args) == 0:
             print("** class name missing **")
             return False
         if args[0] in classes:
             if len(args) > 1:
                 key = args[0] + '.' + args[1]
-                if key in models.storage.all():
+                if key in sd:
                     if len(args) > 2:
                         if len(args) > 3:
-                            setattr(models.storage.all()[key], args[2], args[3])
-                            models.storage.all()[key].save()
+                            setattr(sd[key], args[2], args[3])
+                            sd[key].save()
                         else:
                             print("** value missing **")
                     else:
