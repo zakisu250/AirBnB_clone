@@ -57,17 +57,6 @@ class TestFileStorage(unittest.TestCase):
         self.assertTrue(hasattr(FileStorage, "_FileStorage__objects"))
         self.assertEqual(getattr(FileStorage, "_FileStorage__objects"), {})
 
-    def help_test_all(self, classname):
-        """Helper tests all() method for classname."""
-        self.resetStorage()
-        self.assertEqual(storage.all(), {})
-
-        o = storage.classes()[classname]()
-        storage.new(o)
-        key = "{}.{}".format(type(o).__name__, o.id)
-        self.assertTrue(key in storage.all())
-        self.assertEqual(storage.all()[key], o)
-
     def test_5_all_base_model(self):
         """Tests all() method for BaseModel."""
         self.help_test_all("BaseModel")
@@ -95,20 +84,6 @@ class TestFileStorage(unittest.TestCase):
     def test_5_all_review(self):
         """Tests all() method for Review."""
         self.help_test_all("Review")
-
-    def help_test_all_multiple(self, classname):
-        """Helper tests all() method with many objects for classname."""
-        self.resetStorage()
-        self.assertEqual(storage.all(), {})
-
-        cls = storage.classes()[classname]
-        objs = [cls() for i in range(1000)]
-        [storage.new(o) for o in objs]
-        self.assertEqual(len(objs), len(storage.all()))
-        for o in objs:
-            key = "{}.{}".format(type(o).__name__, o.id)
-            self.assertTrue(key in storage.all())
-            self.assertEqual(storage.all()[key], o)
 
     def test_5_all_multiple_base_model(self):
         """Tests all() method with many objects."""
@@ -153,16 +128,6 @@ class TestFileStorage(unittest.TestCase):
             FileStorage.all(self, 98)
         msg = "all() takes 1 positional argument but 2 were given"
         self.assertEqual(str(e.exception), msg)
-
-    def help_test_new(self, classname):
-        """Helps tests new() method for classname."""
-        self.resetStorage()
-        cls = storage.classes()[classname]
-        o = cls()
-        storage.new(o)
-        key = "{}.{}".format(type(o).__name__, o.id)
-        self.assertTrue(key in FileStorage._FileStorage__objects)
-        self.assertEqual(FileStorage._FileStorage__objects[key], o)
 
     def test_5_new_base_model(self):
         """Tests new() method for BaseModel."""
@@ -209,22 +174,6 @@ class TestFileStorage(unittest.TestCase):
         msg = "new() takes 2 positional arguments but 3 were given"
         self.assertEqual(str(e.exception), msg)
 
-    def help_test_save(self, classname):
-        """Helps tests save() method for classname."""
-        self.resetStorage()
-        cls = storage.classes()[classname]
-        o = cls()
-        storage.new(o)
-        key = "{}.{}".format(type(o).__name__, o.id)
-        storage.save()
-        self.assertTrue(os.path.isfile(FileStorage._FileStorage__file_path))
-        d = {key: o.to_dict()}
-        with open(FileStorage._FileStorage__file_path,
-                  "r", encoding="utf-8") as f:
-            self.assertEqual(len(f.read()), len(json.dumps(d)))
-            f.seek(0)
-            self.assertEqual(json.load(f), d)
-
     def test_5_save_base_model(self):
         """Tests save() method for BaseModel."""
         self.help_test_save("BaseModel")
@@ -269,19 +218,6 @@ class TestFileStorage(unittest.TestCase):
         msg = "save() takes 1 positional argument but 2 were given"
         self.assertEqual(str(e.exception), msg)
 
-    def help_test_reload(self, classname):
-        """Helps test reload() method for classname."""
-        self.resetStorage()
-        storage.reload()
-        self.assertEqual(FileStorage._FileStorage__objects, {})
-        cls = storage.classes()[classname]
-        o = cls()
-        storage.new(o)
-        key = "{}.{}".format(type(o).__name__, o.id)
-        storage.save()
-        storage.reload()
-        self.assertEqual(o.to_dict(), storage.all()[key].to_dict())
-
     def test_5_reload_base_model(self):
         """Tests reload() method for BaseModel."""
         self.help_test_reload("BaseModel")
@@ -309,21 +245,6 @@ class TestFileStorage(unittest.TestCase):
     def test_5_reload_review(self):
         """Tests reload() method for Review."""
         self.help_test_reload("Review")
-
-    def help_test_reload_mismatch(self, classname):
-        """Helps test reload() method for classname."""
-        self.resetStorage()
-        storage.reload()
-        self.assertEqual(FileStorage._FileStorage__objects, {})
-
-        cls = storage.classes()[classname]
-        o = cls()
-        storage.new(o)
-        key = "{}.{}".format(type(o).__name__, o.id)
-        storage.save()
-        o.name = "Laura"
-        storage.reload()
-        self.assertNotEqual(o.to_dict(), storage.all()[key].to_dict())
 
     def test_5_reload_mismatch_base_model(self):
         """Tests reload() method mismatch for BaseModel."""
