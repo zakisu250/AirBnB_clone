@@ -58,7 +58,7 @@ class HBNBCommand(cmd.Cmd):
                 print("** class doesn't exist **")
             else:
                 for key, val in models.storage.all().items():
-                    if args[1] == val.id and isinstance(val, [key]):
+                    if args[1] == val.id:
                         print(val)
                         return
                 print("** no instance found **")
