@@ -29,8 +29,8 @@ class TestBaseModel(unittest.TestCase):
     def resetStorage(self):
         """Resets FileStorage data."""
         FileStorage._FileStorage__objects = {}
-        if os.path.isfile(FileStorage._FileStorage__file):
-            os.remove(FileStorage._FileStorage__file)
+        if os.path.isfile(FileStorage._FileStorage__file_path):
+            os.remove(FileStorage._FileStorage__file_path)
 
     def test_3_instantiation(self):
         """Tests instantiation of BaseModel class."""
@@ -156,8 +156,8 @@ class TestBaseModel(unittest.TestCase):
         b.save()
         key = "{}.{}".format(type(b).__name__, b.id)
         d = {key: b.to_dict()}
-        self.assertTrue(os.path.isfile(FileStorage._FileStorage__file))
-        with open(FileStorage._FileStorage__file,
+        self.assertTrue(os.path.isfile(FileStorage._FileStorage__file_path))
+        with open(FileStorage._FileStorage__file_path,
                   "r", encoding="utf-8") as f:
             self.assertEqual(len(f.read()), len(json.dumps(d)))
             f.seek(0)

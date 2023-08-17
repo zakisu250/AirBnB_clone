@@ -29,8 +29,8 @@ class TestCity(unittest.TestCase):
     def resetStorage(self):
         """Resets FileStorage data."""
         FileStorage._FileStorage__objects = {}
-        if os.path.isfile(FileStorage._FileStorage__file):
-            os.remove(FileStorage._FileStorage__file)
+        if os.path.isfile(FileStorage._FileStorage__file_path):
+            os.remove(FileStorage._FileStorage__file_path)
 
     def test_8_instantiation(self):
         """Tests instantiation of City class."""
