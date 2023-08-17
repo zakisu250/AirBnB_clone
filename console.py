@@ -5,7 +5,6 @@
 import cmd
 import json
 import models
-import shlex
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -85,7 +84,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Prints all str representation of all instances """
-        split_args = shlex.split(args)
+        split_args = args.split()
         n_list = []
         dict_json = models.storage.all()
 
@@ -95,9 +94,10 @@ class HBNBCommand(cmd.Cmd):
             print(n_list)
         else:
             if split_args[0] in classes:
-                for key in dict_json:
-                    if split_args[0] == key.split('.')[0]:
-                        n_list.append(str(dict_json[key]))
+                cl_name = split_args[0]
+                cl_obj = dict_json[cl_obj]
+                for key in cl_obj:
+                    n_list.append(str(cl_obj[key]))
                 print(n_list)
             else:
                 print("** class doesn't exist **")
