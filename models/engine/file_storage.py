@@ -5,6 +5,7 @@ This module serializes and deserializes JSON strings
 import json
 from ..base_model import BaseModel
 from models.user import User
+from os.path import exists
 name_class = ["BaseModel", "City", "State",
               "Place", "Amenity", "Review",
               "User"]
@@ -45,7 +46,7 @@ class FileStorage:
         """ recreates or deserializes json string to __obj """
         a_dict = {}
         self.__objects = {}
-        if (self.__file_path):
+        if (exists(self.__file_path)):
             with open(self.__file_path, 'r') as f:
                 a_dict = json.loads(f)
                 for key, val in a_dict.items():
