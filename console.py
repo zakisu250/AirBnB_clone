@@ -22,12 +22,11 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = '(hbnb)'
 
-    def do_EOF(self, arg):
+    def do_EOF(self, line):
         """ Terminate the command interpreter """
-        print()
         return True
 
-    def do_quit(self, arg):
+    def do_quit(self, line):
         """ Quit command to exit the program """
         return True
 
@@ -54,7 +53,7 @@ class HBNBCommand(cmd.Cmd):
         if not line:
             print(msg[0])
             return 1
-        args = line.split()
+        args = line.split(" ")
         if arg_nums >= 1 and args[0] not in cls:
             print(msg[1])
             return 1
@@ -66,10 +65,11 @@ class HBNBCommand(cmd.Cmd):
 
         sd = storage.all()
         for i in range(len(args)):
-            if args[i][0] == '"':
+            if args[1][i] == '"':
                 args[i] = args[i].replace('"', "")
+
         key = args[0] + '.' + args[1]
-        if arg_nums >= 2 and key not in sd:
+        if arg_nums > 1 and key not in sd:
             print(msg[3])
             return 1
         elif arg_nums == 2:
@@ -118,8 +118,8 @@ class HBNBCommand(cmd.Cmd):
         sd = storage.all()
         if args[1][0] == '"':
             args[1] = args[1].replace('"', "")
-        key = args[0] + '.' + args[1]
-        print(sd[key])
+        keys = args[0] + '.' + args[1]
+        print(sd[keys])
 
     def do_destroy(self, line):
         """ Remove or delete the instance
@@ -168,7 +168,7 @@ class HBNBCommand(cmd.Cmd):
             return
 
         args = line.split(" ")
-        s_d = storage.all()
+        sd = storage.all()
         for i in range(len(args[1:]) + 1):
             if args[i][0] == '"':
                 args[i] = args[i].replace('"', "")
@@ -183,18 +183,18 @@ class HBNBCommand(cmd.Cmd):
         except ValueError:
             pass
 
-        class_a = type(s_d[key]).__dict__
+        class_a = type(sd[key]).__dict__
         if a_key in class_a.keys():
             try:
                 a_val = type(class_a[a_key])(a_val)
             except Exception:
                 print("Entered wrong value type")
                 return
-        setattr(s_d[key], a_key, a_val)
+        setattr(sd[key], a_key, a_val)
         storage.save()
 
     def do_count(self, line):
-        """Counts the instances of a class.
+        """ Counts the instances of a class.
         """
         words = line.split(' ')
         if not words[0]:

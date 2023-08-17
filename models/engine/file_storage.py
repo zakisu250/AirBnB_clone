@@ -18,14 +18,14 @@ class FileStorage:
         """
         return self.__objects
 
-    def new(self, objc):
+    def new(self, object):
         """ Creates the object with the key in __obj
 
         Args:
-            objc(obj): object to create
+            object(obj): object to create
 
         """
-        self.__objects[objc.__class__.__name__ + '.' + str(objc)] = objc
+        self.__objects[object.__class__.__name__ + '.' + str(object)] = object
 
     def save(self):
         """ saves or serializes the json string to file """
@@ -39,8 +39,8 @@ class FileStorage:
 
         try:
             with open(self.__file, 'r') as f:
-                dic = json.loads(f.read())
-                for val in dic.values():
+                dicts = json.loads(f.read())
+                for val in dicts.values():
                     cls = val["__class__"]
                     self.new(eval(cls)(**val))
         except Exception:
