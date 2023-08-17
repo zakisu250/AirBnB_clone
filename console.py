@@ -5,6 +5,7 @@
 import cmd
 import json
 import models
+import shlex
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -37,10 +38,10 @@ class HBNBCommand(cmd.Cmd):
         """ Creates a new instance """
         if not (args):
             print("** class name missing **")
-        elif args not in HBNBCommand.classes:
+        elif args not in classes:
             print("** class doesn't exist **")
         else:
-            instance = eval[args]()
+            instance = eval(args)()
             instance.save()
             print(instance.id)
 
@@ -55,9 +56,9 @@ class HBNBCommand(cmd.Cmd):
             elif args[0] not in classes:
                 print("** class doesn't exist **")
             else:
-                for k, v in storage.all().items():
-                    if args[1] == v.id:
-                        print(v)
+                for key, val in models.storage.all().items():
+                    if args[1] == val.id and isinstance(val, [key]):
+                        print(val)
                         return
                 print("** no instance found **")
 
@@ -73,10 +74,10 @@ class HBNBCommand(cmd.Cmd):
         if args[0] not in classes:
             print("** class doesn't exist **")
             return
-        for k, v in storage.all().items():
+        for k, v in models.storage.all().items():
             if args[1] == v.id:
-                del storage.all()[k]
-                storage.save()
+                del models.storage.all()[k]
+                models.storage.save()
                 return
         print("** no instance found **")
 
@@ -85,18 +86,19 @@ class HBNBCommand(cmd.Cmd):
         split_args = shlex.split(args)
         n_list = []
         dict_json = models.storage.all()
-        if args:
-            try:
-                for key in models.storage.all():
+
+        if not args:
+            for key in dict_json:
+                n_list.append(str(dict_json[key]))
+            print(n_list)
+        else:
+            if split_args[0] in classes:
+                for key in dict_json:
                     if split_args[0] == key.split('.')[0]:
                         n_list.append(str(dict_json[key]))
                 print(n_list)
-            except Exception:
+            else:
                 print("** class doesn't exist **")
-        else:
-            for key in models.storage.all():
-                n_list.append(str(models.storage.all()[key]))
-            print(n_list)
 
     def do_update(self, args):
         """ Updates an instance based on the class name and id """
@@ -107,11 +109,11 @@ class HBNBCommand(cmd.Cmd):
         if args[0] in classes:
             if len(args) > 1:
                 key = args[0] + '.' + args[1]
-                if key in storage.all():
+                if key in models.storage.all():
                     if len(args) > 2:
                         if len(args) > 3:
-                            setattr(storage.all()[key], args[2], args[3])
-                            storage.all()[key].save()
+                            setattr(models.storage.all()[key], args[2], args[3])
+                            models.storage.all()[key].save()
                         else:
                             print("** value missing **")
                     else:

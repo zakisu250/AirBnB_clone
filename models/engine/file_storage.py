@@ -33,7 +33,7 @@ class FileStorage:
         cl = objc.__class__.__name__
         ob_id = objc.id
         cl_id = cl + "." + ob_id
-        self.__objects[cl.id] = objc
+        self.__objects[cl_id] = objc
 
     def save(self):
         """ saves or serializes the json string to file """
@@ -46,13 +46,12 @@ class FileStorage:
     def reload(self):
         """ recreates or deserializes json string to __obj """
         a_dict = {}
-        self.__objects = {}
         if (exists(self.__file_path)):
             with open(self.__file_path, 'r') as f:
-                a_dict = json.loads(f)
+                a_dict = json.load(f)
                 for key, val in a_dict.items():
-                    cls_name = key.split(".")[0]
+                    cls_name, obj_id = key.split(".")
                     if cls_name in name_class:
-                        self.__objetcs[key] = eval(cls_name)(**val)
+                        self.__objects[key] = eval(cls_name)id=obj_id, (**val)
                     else:
                         pass

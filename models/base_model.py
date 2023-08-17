@@ -13,7 +13,7 @@ class BaseModel():
         created_at(datetime): time of the creation
         updated_at(datetime): time of the update
     """
-
+    DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
     def __init__(self, *args, **kwargs):
         """ Initializes the base class with attributes
 
@@ -21,25 +21,24 @@ class BaseModel():
             args(args): arguments
             kwargs(dict): key/value pair arguments for attribute and value
         """
-        DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
         if args is not None and len(args) > 0:
             pass
         if kwargs:
             for key, val in kwargs.items():
-                if key in ["created_at", 'updated_at']:
-                    val = datetime.strptime(val, DATE_FORMAT)
+                if key in ["created_at", "updated_at"]:
+                    val = datetime.strptime(val, self.DATE_FORMAT)
                 if key not in ["__class__"]:
                     setattr(self, key, val)
         else:
             self.id = str(uuid.uuid4())
-            self.created_at = datetime.utcnow()
+            self.created_at = self.updated_at = datetime.utcnow()
             models.storage.new(self)
 
     def __str__(self):
         """ Prints the string format of the class,
-        the id, and the whole object """
-        cl = self.__class__.__name__
-        return ("[{}] ({}) {}".format(cl, self.id, self.__dict__))
+            the id, and the whole object """
+        return ("[{}] ({}) {}".format(self.__class__.__name__,
+                                      self.id, self.__dict__))
 
     def save(self):
         """ Updates the public instance attribute updated_at
