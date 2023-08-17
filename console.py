@@ -1,10 +1,10 @@
 #!/usr/bin/python3
-""" HBNBComand commant interpreter """
+"""Class HBNBComand a program called console.py
+"""
 
 import cmd
 import json
-import re
-import models
+from models import storage
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -13,25 +13,16 @@ from models.place import Place
 from models.amenity import Amenity
 from models.review import Review
 
-classes = {'BaseModel': BaseModel,
-           'User': User, 'Place': Place,
-           'State': State, 'City': City,
-	   'Amenity': Amenity, 'Review': Review}
+classes = {'BaseModel': BaseModel, 'User': User, 'Place': Place,
+           'State': State, 'City': City, 'Amenity': Amenity, 'Review': Review}
 
 
 class HBNBCommand(cmd.Cmd):
-    """ hbnb command interpreter class
-
-    Attributes:
-    	id(str): created with uuid4
-	created_at(datetime): The time the instance is created
-	updated_at(datetime): The time the instance is updated
-    """
+    """ hbnb command interpreter """
     prompt = '(hbnb) '
 
     def do_EOF(self, arg):
         """ End of file"""
-        print()
         return True
 
     def do_quit(self, arg):
@@ -39,11 +30,11 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def emptyline(self):
-        """doen't execute anything """
+        """don´t execute nothing """
         pass
 
     def do_create(self, args):
-        """ Creates a new instance with args input """
+        """ Creates a new instance """
         if not (args):
             print("** class name missing **")
         elif args not in HBNBCommand.classes:
@@ -54,7 +45,7 @@ class HBNBCommand(cmd.Cmd):
             print(instance.id)
 
     def do_show(self, args):
-        """ Prints str format of an instance with args """
+        """ Prints str representation of an instance """
         if not (args):
             print("** class name missing **")
         else:
@@ -64,9 +55,9 @@ class HBNBCommand(cmd.Cmd):
             elif args[0] not in classes:
                 print("** class doesn't exist **")
             else:
-                for key, val in models.storage.all().items():
-                    if args[1] == val.id:
-                        print(val)
+                for k, v in storage.all().items():
+                    if args[1] == v.id:
+                        print(v)
                         return
                 print("** no instance found **")
 
@@ -82,10 +73,10 @@ class HBNBCommand(cmd.Cmd):
         if args[0] not in classes:
             print("** class doesn't exist **")
             return
-        for key, val in models.storage.all().items():
-            if args[1] == val.id:
-                del models.storage.all()[key]
-                models.storage.save()
+        for k, v in storage.all().items():
+            if args[1] == v.id:
+                del storage.all()[k]
+                storage.save()
                 return
         print("** no instance found **")
 
@@ -93,7 +84,7 @@ class HBNBCommand(cmd.Cmd):
         """ Prints all str representation of all instances """
         split_args = shlex.split(args)
         n_list = []
-        a_dict = models.storage.all()
+        dict_json = models.storage.all()
         if args:
             try:
                 for key in models.storage.all():
@@ -116,11 +107,11 @@ class HBNBCommand(cmd.Cmd):
         if args[0] in classes:
             if len(args) > 1:
                 key = args[0] + '.' + args[1]
-                if key in models.storage.all():
+                if key in storage.all():
                     if len(args) > 2:
                         if len(args) > 3:
-                            setattr(models.storage.all()[key], args[2], args[3])
-                            models.storage.all()[key].save()
+                            setattr(storage.all()[key], args[2], args[3])
+                            storage.all()[key].save()
                         else:
                             print("** value missing **")
                     else:

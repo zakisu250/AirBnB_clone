@@ -22,21 +22,18 @@ class BaseModel():
             kwargs(dict): key/value pair arguments for attribute and value
         """
         DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
-        if not kwargs:
+        if args is not None and len(args) > 0:
+            pass
+        if kwargs:
+            for key, val in kwargs.items():
+                if key in ["created_at", 'updated_at']:
+                    val = datetime.strptime(val, DATE_FORMAT)
+                if key not in ["__class__"]:
+                    setattr(self, key, val)
+        else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.utcnow()
-            self.updated_at = datetime.utcnow()
             models.storage.new(self)
-
-        else:
-            for key, val in kwargs.items():
-                if key in ("updated_at", "created_at"):
-                    self.__dict__[key] = datetime.strptime(
-                            val, DATE_FORMAT)
-                elif key[0] == "id":
-                    self.__dict__[key] = str(val)
-                else:
-                    self.__dict__[key] = val
 
     def __str__(self):
         """ Prints the string format of the class,
@@ -47,17 +44,18 @@ class BaseModel():
     def save(self):
         """ Updates the public instance attribute updated_at
         with the current datetime """
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now()
+        models.storage.new(self)
         models.storage.save()
 
     def to_dict(self):
         """ returns the __dict__ of instances in a dictionary format """
         obj_dict = {}
         for key, val in self.__dict__.items():
-            if key == "created_at" or key == "updated_at":
-                obj_dict[key] = val.isoformat()
-            else:
+            if key in ["created_at", "updated_at"]:
                 obj_dict[key] = val
 
         obj_dict['__class__'] = self.__class__.__name__
+        obj_dict['created_at'] = self.created_at.isoformat()
+        obj_dict['updated_at'] = self.updated_at.isoformat()
         return obj_dict

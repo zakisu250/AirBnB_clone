@@ -5,12 +5,15 @@ This module serializes and deserializes JSON strings
 import json
 from ..base_model import BaseModel
 from models.user import User
+name_class = ["BaseModel", "City", "State",
+              "Place", "Amenity", "Review",
+              "User"]
 
 
 class FileStorage:
     """ File storage class """
 
-    __file = "file.json"
+    __file_path = "file.json"
     __objects = {}
 
     def all(self):
@@ -18,30 +21,36 @@ class FileStorage:
         """
         return self.__objects
 
-    def new(self, object):
+    def new(self, objc):
         """ Creates the object with the key in __obj
 
         Args:
-            object(obj): object to create
+            objc(obj): object to create
 
         """
-        self.__objects[object.__class__.__name__ + '.' + str(object)] = object
+        cl = objc.__class__.__name__
+        ob_id = objc.id
+        cl_id = cl + "." + ob_id
+        self.__objects[cl.id] = objc
 
     def save(self):
         """ saves or serializes the json string to file """
-
-        with open(self.__file, 'w+') as f:
-            json.dump({key: value.to_dict() for key, value in
-                       self.__objects.items()}, f)
+        a_dict = {}
+        for key, val in self.__objects.items():
+            a_dict[key] = val.to_dict()
+        with open(self.__file_path, 'w+') as f:
+            json.dump(a_dict, f)
 
     def reload(self):
         """ recreates or deserializes json string to __obj """
-
-        try:
+        a_dict = {}
+        self.__objects = {}
+        if (self.__file_path):
             with open(self.__file, 'r') as f:
-                dicts = json.loads(f.read())
-                for val in dicts.values():
-                    cls = val["__class__"]
-                    self.new(eval(cls)(**val))
-        except Exception:
-            pass
+                a_dict = json.loads(f)
+                for key, val in a_dict.items():
+                    cls_name = key.split(".")[0]
+                    if cls_name in name_class:
+                        self.__objetcs[key] = eval(cls_name)(**val))
+                    else:
+                        pass
