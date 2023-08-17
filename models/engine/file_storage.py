@@ -6,6 +6,7 @@ import json
 from os.path import exists
 from ..base_model import BaseModel
 from models.user import User
+from os.path import exists
 name_class = ["BaseModel", "City", "State",
               "Place", "Amenity", "Review",
               "User"]
