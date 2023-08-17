@@ -46,7 +46,7 @@ class FileStorage:
         a_dict = {}
         self.__objects = {}
         if (self.__file_path):
-            with open(self.__file, 'r') as f:
+            with open(self.__file_path, 'r') as f:
                 a_dict = json.loads(f)
                 for key, val in a_dict.items():
                     cls_name = key.split(".")[0]
