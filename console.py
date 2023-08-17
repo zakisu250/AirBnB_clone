@@ -75,9 +75,10 @@ class HBNBCommand(cmd.Cmd):
         if args[0] not in classes:
             print("** class doesn't exist **")
             return
-        for k, v in models.storage.all().items():
-            if args[1] == v.id:
-                del models.storage.all()[k]
+        sd = models.storage.all()
+        for key, val in sd.items():
+            if args[0] == val.id:
+                del sd[key]
                 models.storage.save()
                 return
         print("** no instance found **")
