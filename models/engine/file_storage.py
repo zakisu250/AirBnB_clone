@@ -51,6 +51,6 @@ class FileStorage:
                 for key, val in a_dict.items():
                     cls_name = key.split(".")[0]
                     if cls_name in name_class:
-                        self.__objetcs[key] = eval(cls_name)(**val))
+                        self.__objetcs[key] = eval(cls_name)(**val)
                     else:
                         pass
