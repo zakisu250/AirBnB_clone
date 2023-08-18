@@ -4,6 +4,7 @@
 
 import cmd
 import json
+import re
 import models
 from models.base_model import BaseModel
 from models.user import User
@@ -94,8 +95,8 @@ class HBNBCommand(cmd.Cmd):
             print(n_list)
         else:
             if split_args[0] in classes:
-                cl_name = split_args[0]
-                cl_obj = dict_json[cl_obj]
+                cl_name = split_args[0] + '.'
+                cl_obj = {k: v for k, v in dict_json.items() if cl_name in k}
                 for key in cl_obj:
                     n_list.append(str(cl_obj[key]))
                 print(n_list)
@@ -127,6 +128,49 @@ class HBNBCommand(cmd.Cmd):
                 print("** instance id missing **")
         else:
             print("** class doesn't exist **")
+
+    def do_count(self, args):
+        """ Counts instances of a certain class """
+        count = 0
+        for instance_object in storage.all().values():
+            if instance_object.__class__.__name__ == args:
+                count += 1
+        print(count)
+
+    def default(self, line):
+        """ Method to take care of following commands:
+        <class name>.all()
+        <class name>.count()
+        <class name>.show(<id>)
+        <class name>.destroy(<id>)
+        <class name>.update(<id>, <attribute name>, <attribute value>)
+        <class name>.update(<id>, <dictionary representation)
+        """
+        clss = ["BaseModel", "User", "State", "City", "Amenity",
+                 "Place", "Review"]
+
+        cmnds = {"all": self.do_all,
+                 "count": self.do_count,
+                 "show": self.do_show,
+                 "destroy": self.do_destroy,
+                 "update": self.do_update}
+
+        args = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
+        if args:
+            args = args.groups()
+        if not args or len(args) < 2 or args[0] not in clss:
+            super().default(line)
+            return
+
+        if args[1] in cmnds.keys():
+            if args[1] == "all":
+                cmnds[args[1]](args[0])
+            else:
+                if "(" in args[2] and ")" in args[2]:
+                    args[2] = args[2][1:-1]
+                cmnds[args[1]](args[0] + ' ' + args[2])
+        else:
+            super().default(line)
 
 
 if __name__ == '__main__':
