@@ -106,11 +106,11 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, args):
         """ Updates an instance based on the class name and id """
         args = args.split()
-        sd = models.storage.all()
         if len(args) == 0:
             print("** class name missing **")
             return False
         if args[0] in classes:
+            sd = models.storage.all()
             if len(args) > 1:
                 key = args[0] + '.' + args[1]
                 if key in sd:
@@ -130,12 +130,14 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
 
     def do_count(self, args):
-        """ Counts instances of a certain class """
-        count = 0
-        for instance_object in storage.all().values():
-            if instance_object.__class__.__name__ == args:
-                count += 1
-        print(count)
+        """ Counts the instances of a class """
+        split_args = args.split()
+        if len(split_args) == 0 or split_args[0] not in classes:
+            print("** class name missing **")
+        else:
+            cl_name = split_args[0] + "."
+            cl_count = sum(1 for key in models.storage.all() if cl_name in key)
+            print(cl_count)
 
     def default(self, line):
         """ Method to take care of following commands:
