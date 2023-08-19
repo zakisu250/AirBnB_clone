@@ -43,16 +43,22 @@ Python Scripts
     A documentation is not a simple word, it’s a real sentence explaining what’s the purpose of the module, class or method (the length of it will be verified)
 
 Execution
+=========
 
 The shell should work like this in interactive mode:
 
 $ ./console.py
+
 (hbnb) help
 
 Documented commands (type help <topic>):
+----------------------------------------
 EOF  help  quit
-(hbnb) 
-(hbnb) 
+
+(hbnb)
+
+(hbnb)
+
 (hbnb) quit
 $
 
@@ -60,21 +66,33 @@ But also in non-interactive mode:
 $ echo "help" | ./console.py
 (hbnb)
 
-Documented commands (type help <topic>):
+Documented commands (type help <topic>)
+---------------------------------------
 EOF  help  quit
+
 (hbnb)
+
 $
+
 $ cat test_help
+
 help
+
 $
+
 $ cat test_help | ./console.py
+
 (hbnb)
 
 Documented commands (type help <topic>):
-
+----------------------------------------
 EOF  help  quit
+
 (hbnb) 
+
 $
+
+
 
 
 Programmed by: Zekaria Mohammed & Abduselam Nurhussen
